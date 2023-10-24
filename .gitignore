@@ -18,10 +18,10 @@ _build
 .vscode/*
 dist
 dist-newstyle
-Everything.agda
-EverythingSafe.agda
-EverythingSafeGuardedness.agda
-EverythingSafeSizedTypes.agda
+# Everything.agda
+# EverythingSafe.agda
+# EverythingSafeGuardedness.agda
+# EverythingSafeSizedTypes.agda
 failures
 GenerateEverything
 Haskell
