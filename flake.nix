@@ -8,26 +8,36 @@
     nixpkgs.url = "github:NixOS/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
 
-    # determi
-    agda-driver.url = "github:determi-io/agda-driver";
+    # agda
+    # NOTE: We cannot use the nixpkgs.agda because it has
+    # ghc as runtime dependency, making the resulting closure
+    # very large!
+    agda =
+    {
+      type = "github";
+      owner = "determi-io";
+      repo = "agda-only-agda";
+    };
 
+    # determi
+    # agda-driver.url = "github:determi-io/agda-driver";
   };
 
   ###################################################
-  outputs = { self, nixpkgs, flake-utils, agda-driver }:
+  outputs = { self, nixpkgs, flake-utils, agda }:
   (
     let mkOutputs = system:
     (
       let pkgs = import nixpkgs { inherit system; };
-          agda-driver-bin = "${agda-driver.defaultPackage.${system}}/bin/agda-driver";
+          # agda-driver-bin = "${agda-driver.defaultPackage.${system}}/bin/agda-driver";
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = [ pkgs.agda pkgs.stack ];
-          driver = agda-driver-bin;
+          packages = [  ];
+          # driver = agda-driver-bin;
           myoutpath = self.outPath;
 
-          # DETERMI_NIX_AGDA_PATH = "${agda.outputs.packages.x86_64-linux.Agda}/bin/agda";
+          AGDA = "${agda.outputs.packages.x86_64-linux.determi-io-agda-only-agda}/bin/agda";
         };
 
         packages.default = derivation {
@@ -42,7 +52,7 @@
           PWD = "${pkgs.coreutils}/bin/pwd";
           CHMOD = "${pkgs.coreutils}/bin/chmod";
           STACK = "${pkgs.stack}/bin/stack";
-          AGDA = "${pkgs.agda}/bin/agda";
+          AGDA = "${agda.outputs.packages.x86_64-linux.default}/bin/agda";
           LOCALE_ARCHIVE = "${pkgs.glibcLocalesUtf8}/lib/locale/locale-archive";
           LOCALE = "${pkgs.locale}/bin/locale";
           LC_ALL= "en_US.utf8";
